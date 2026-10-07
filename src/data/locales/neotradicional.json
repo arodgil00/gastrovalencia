@@ -1,0 +1,24 @@
+[
+  {
+    "id": "lindala",
+    "nombre": "Líndala",
+    "categorias": ["Bar / restaurante neotradicional"],
+    "zona": "El Cabañal",
+    "precio": "€€",
+    "coords": [39.467812, -0.329104],
+    "imagen": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=600&auto=format&fit=crop",
+    "descripcion": "Restobar neotradicional referente en el Cabañal con un patio interior único y platillos mediterráneos.",
+    "direccion": "Carrer de Pedro Maza, 26, València"
+  },
+  {
+    "id": "bar-cremaet",
+    "nombre": "Bar Cremaet",
+    "categorias": ["Bar / restaurante neotradicional", "Esmorzaret"],
+    "zona": "Camins al Grau",
+    "precio": "€€",
+    "coords": [39.462105, -0.354122],
+    "imagen": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=600&auto=format&fit=crop",
+    "descripcion": "Concepto neotradicional rindiendo culto a la cultura del almuerzo y al cremaet.",
+    "direccion": "Avinguda del Port, 85, València"
+  }
+]
