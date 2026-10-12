@@ -8,390 +8,391 @@ import heroSlides from '../data/hero.json';
 import mapaCardData from '../data/mapa-card.json';
 
 const posts = (await getCollection('blog'))
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 3);
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+    .slice(0, 3);
 ---
 
 <!doctype html>
 <html lang="es">
-	<head>
-		<BaseHead title={SITE_TITLE + ' | Guía Gastronómica Independiente'} description={SITE_DESCRIPTION} />
-		<style>
-			:root {
-				--accent: #d9381e;
-				--bg-light: #fafafa;
-				--text-main: #111;
-			}
+    <head>
+        <BaseHead title={SITE_TITLE + ' | Guía Gastronómica Independiente'} description={SITE_DESCRIPTION} />
+        <style>
+            :root {
+                --accent: #d9381e;
+                --bg-light: #fafafa;
+                --text-main: #111;
+            }
 
-			* {
-				box-sizing: border-box;
-			}
+            * {
+                box-sizing: border-box;
+            }
 
-			html {
-				scrollbar-width: none;
-				width: 100%;
-				overflow-x: hidden;
-			}
+            html {
+                scrollbar-width: none;
+                width: 100%;
+                overflow-x: hidden;
+            }
 
-			body {
-				margin: 0;
-				padding: 0;
-				background-color: var(--bg-light);
-				color: var(--text-main);
-				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-				width: 100%;
-				overflow-x: hidden;
-				-ms-overflow-style: none;
-			}
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: var(--bg-light);
+                color: var(--text-main);
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                width: 100%;
+                overflow-x: hidden;
+                -ms-overflow-style: none;
+            }
 
-			html::-webkit-scrollbar, 
-			body::-webkit-scrollbar {
-				display: none;
-				width: 0;
-				height: 0;
-			}
+            html::-webkit-scrollbar, 
+            body::-webkit-scrollbar {
+                display: none;
+                width: 0;
+                height: 0;
+            }
 
-			main {
-				margin: 0;
-				padding: 0;
-				width: 100%;
-				max-width: 100% !important;
-			}
+            main {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                max-width: 100% !important;
+            }
 
-			/* --- HERO DE LADO A LADO --- */
-			.hero-slider {
-				position: relative;
-				width: 100vw;
-				left: 50%;
-				right: 50%;
-				margin-left: -50vw;
-				margin-right: -50vw;
-				height: 85vh;
-				min-height: 600px;
-				overflow: hidden;
-				margin-top: 0;
-			}
+            /* --- HERO DE LADO A LADO --- */
+            .hero-slider {
+                position: relative;
+                width: 100vw;
+                left: 50%;
+                right: 50%;
+                margin-left: -50vw;
+                margin-right: -50vw;
+                height: 85vh;
+                min-height: 600px;
+                overflow: hidden;
+                margin-top: 0;
+            }
 
-			.slide {
-				position: absolute;
-				top: 0; 
-				left: 0; 
-				width: 100%; 
-				height: 100%;
-				background-size: cover;
-				background-position: center;
-				opacity: 0;
-				transition: opacity 1s ease-in-out;
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
-				padding: 0 6%;
-			}
+            .slide {
+                position: absolute;
+                top: 0; 
+                left: 0; 
+                width: 100%; 
+                height: 100%;
+                background-size: cover;
+                background-position: center;
+                opacity: 0;
+                transition: opacity 1s ease-in-out;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 6%;
+            }
 
-			.slide.active {
-				opacity: 1;
-			}
+            .slide.active {
+                opacity: 1;
+            }
 
-			.slide-overlay {
-				position: absolute;
-				top: 0; left: 0; right: 0; bottom: 0;
-				background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.4) 100%);
-				z-index: 1;
-			}
+            .slide-overlay {
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.4) 100%);
+                z-index: 1;
+            }
 
-			/* --- 1/3 IZQUIERDA: MARCA Y TEXTO DINÁMICO --- */
-			.hero-left-content {
-				position: relative;
-				z-index: 2;
-				color: white;
-				max-width: 480px;
-			}
+            /* --- 1/3 IZQUIERDA: MARCA Y TEXTO DINÁMICO --- */
+            .hero-left-content {
+                position: relative;
+                z-index: 2;
+                color: white;
+                max-width: 480px;
+            }
 
-			.hero-left-content h1 {
-				font-family: "Georgia", serif;
-				font-size: 3.8rem;
-				font-weight: 900;
-				letter-spacing: 1px;
-				margin: 0 0 1rem 0;
-				text-transform: uppercase;
-				line-height: 1.1;
-				text-shadow: 0 4px 20px rgba(0,0,0,0.4);
-			}
+            .hero-left-content h1 {
+                font-family: "Georgia", serif;
+                font-size: 3.8rem;
+                font-weight: 900;
+                letter-spacing: 1px;
+                margin: 0 0 1rem 0;
+                text-transform: uppercase;
+                line-height: 1.1;
+                text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            }
 
-			.hero-subtitle {
-				font-size: 1.1rem;
-				font-weight: 300;
-				line-height: 1.5;
-				letter-spacing: 0.5px;
-				opacity: 0.95;
-				text-shadow: 0 2px 10px rgba(0,0,0,0.4);
-				border-left: 3px solid var(--accent);
-				padding-left: 1rem;
-			}
+            .hero-subtitle {
+                font-size: 1.1rem;
+                font-weight: 300;
+                line-height: 1.5;
+                letter-spacing: 0.5px;
+                opacity: 0.95;
+                text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+                border-left: 3px solid var(--accent);
+                padding-left: 1rem;
+            }
 
-			/* --- 1/3 DERECHA: TARJETA IMAGEN 100% CON TEXTO ENCIMA --- */
-			.hero-right-map {
-				position: relative;
-				z-index: 2;
-				width: 320px;
-				height: 280px;
-				border-radius: 16px;
-				overflow: hidden;
-				text-decoration: none;
-				display: flex;
-				align-items: flex-end;
-				padding: 1.8rem;
-				background-size: cover;
-				background-position: center;
-				box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-				transition: transform 0.3s ease, box-shadow 0.3s ease;
-				border: 1px solid rgba(255, 255, 255, 0.3);
-			}
+            /* --- 1/3 DERECHA: TARJETA SIN SOMBREADO --- */
+            .hero-right-map {
+                position: relative;
+                z-index: 2;
+                width: 400px;
+                height: 70vh;
+                max-height: 580px;
+                min-height: 420px;
+                border-radius: 20px;
+                overflow: hidden;
+                text-decoration: none;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+                padding: 2.2rem 1.5rem;
+                background-size: cover;
+                background-position: center;
+                box-shadow: 0 20px 45px rgba(0,0,0,0.5);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                border: 1px solid rgba(255, 255, 255, 0.4);
+            }
 
-			.hero-right-map:hover {
-				transform: translateY(-5px);
-				box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-			}
+            .hero-right-map:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+            }
 
-			/* Capa oscura degradada sobre la imagen para que resalte el texto */
-			.map-card-overlay {
-				position: absolute;
-				top: 0; left: 0; right: 0; bottom: 0;
-				background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.75) 100%);
-				z-index: 1;
-				transition: background 0.3s ease;
-			}
+            /* Texto Superior (MÁS GRANDE, Georgia, Negro) */
+            .map-top-tag {
+                position: relative;
+                z-index: 2;
+                font-family: "Georgia", serif;
+                font-size: 2rem;
+                font-weight: 900;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                color: #000000;
+                text-align: center;
+                background: transparent;
+                padding: 0;
+            }
 
-			.hero-right-map:hover .map-card-overlay {
-				background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.85) 100%);
-			}
+            /* Texto Inferior (MÁS PEQUEÑO, Georgia, Negro) */
+            .map-card-content {
+                position: relative;
+                z-index: 2;
+                width: 100%;
+                text-align: center;
+            }
 
-			.map-card-content {
-				position: relative;
-				z-index: 2;
-				color: white;
-				width: 100%;
-			}
+            .map-card-content h3 {
+                margin: 0;
+                font-family: "Georgia", serif;
+                font-size: 1.1rem;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                line-height: 1.3;
+                color: #000000;
+                background: transparent;
+                padding: 0;
+            }
 
-			.map-action-tag {
-				display: block;
-				font-size: 0.65rem;
-				font-weight: 800;
-				letter-spacing: 2px;
-				text-transform: uppercase;
-				color: #ff6b4a;
-				margin-bottom: 0.3rem;
-			}
+            /* --- CONTENIDO INFERIOR --- */
+            .clean-section {
+                max-width: 1000px;
+                margin: 5rem auto;
+                padding: 0 1.5rem;
+            }
 
-			.map-card-content h3 {
-				margin: 0;
-				font-size: 1.4rem;
-				font-weight: 900;
-				text-transform: uppercase;
-				letter-spacing: 0.5px;
-				line-height: 1.2;
-			}
+            .section-title {
+                text-align: center;
+                font-size: 1.8rem;
+                font-weight: 800;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                margin-bottom: 3rem;
+            }
 
-			/* --- CONTENIDO INFERIOR --- */
-			.clean-section {
-				max-width: 1000px;
-				margin: 5rem auto;
-				padding: 0 1.5rem;
-			}
+            .articles-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 2rem;
+            }
 
-			.section-title {
-				text-align: center;
-				font-size: 1.8rem;
-				font-weight: 800;
-				letter-spacing: 1px;
-				text-transform: uppercase;
-				margin-bottom: 3rem;
-			}
+            .article-card {
+                border-bottom: 1px solid #ddd;
+                padding-bottom: 1.5rem;
+                text-decoration: none;
+                color: inherit;
+                display: block;
+                transition: opacity 0.2s;
+            }
 
-			.articles-grid {
-				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-				gap: 2rem;
-			}
+            .article-card:hover {
+                opacity: 0.7;
+            }
 
-			.article-card {
-				border-bottom: 1px solid #ddd;
-				padding-bottom: 1.5rem;
-				text-decoration: none;
-				color: inherit;
-				display: block;
-				transition: opacity 0.2s;
-			}
+            .article-date {
+                font-size: 0.75rem;
+                color: #666;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                display: block;
+                margin-bottom: 0.5rem;
+            }
 
-			.article-card:hover {
-				opacity: 0.7;
-			}
+            .article-card h3 {
+                margin: 0 0 0.5rem 0;
+                font-size: 1.3rem;
+                line-height: 1.4;
+            }
 
-			.article-date {
-				font-size: 0.75rem;
-				color: #666;
-				text-transform: uppercase;
-				letter-spacing: 1px;
-				display: block;
-				margin-bottom: 0.5rem;
-			}
+            .article-card p {
+                margin: 0;
+                font-size: 0.95rem;
+                color: #555;
+                line-height: 1.5;
+            }
 
-			.article-card h3 {
-				margin: 0 0 0.5rem 0;
-				font-size: 1.3rem;
-				line-height: 1.4;
-			}
+            .recommend-box {
+                background: white;
+                padding: 3rem;
+                border: 1px solid #eee;
+                text-align: center;
+            }
 
-			.article-card p {
-				margin: 0;
-				font-size: 0.95rem;
-				color: #555;
-				line-height: 1.5;
-			}
+            .recommend-box h3 {
+                margin-top: 0;
+                font-size: 1.4rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
 
-			.recommend-box {
-				background: white;
-				padding: 3rem;
-				border: 1px solid #eee;
-				text-align: center;
-			}
+            .form-minimal {
+                max-width: 500px;
+                margin: 2rem auto 0 auto;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
 
-			.recommend-box h3 {
-				margin-top: 0;
-				font-size: 1.4rem;
-				text-transform: uppercase;
-				letter-spacing: 1px;
-			}
+            .form-minimal input, .form-minimal textarea {
+                width: 100%;
+                padding: 1rem;
+                border: 1px solid #ddd;
+                background: #fafafa;
+                font-family: inherit;
+                box-sizing: border-box;
+                font-size: 0.95rem;
+            }
 
-			.form-minimal {
-				max-width: 500px;
-				margin: 2rem auto 0 auto;
-				display: flex;
-				flex-direction: column;
-				gap: 1rem;
-			}
+            .form-minimal button {
+                background: #111;
+                color: white;
+                border: none;
+                padding: 1rem;
+                font-weight: bold;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                cursor: pointer;
+                transition: background 0.2s;
+            }
 
-			.form-minimal input, .form-minimal textarea {
-				width: 100%;
-				padding: 1rem;
-				border: 1px solid #ddd;
-				background: #fafafa;
-				font-family: inherit;
-				box-sizing: border-box;
-				font-size: 0.95rem;
-			}
+            .form-minimal button:hover {
+                background: var(--accent);
+            }
 
-			.form-minimal button {
-				background: #111;
-				color: white;
-				border: none;
-				padding: 1rem;
-				font-weight: bold;
-				text-transform: uppercase;
-				letter-spacing: 2px;
-				cursor: pointer;
-				transition: background 0.2s;
-			}
+            @media (max-width: 900px) {
+                .slide { 
+                    flex-direction: column; 
+                    justify-content: center; 
+                    text-align: center; 
+                    padding: 2rem; 
+                    gap: 2rem; 
+                }
+                .hero-left-content { 
+                    max-width: 100%; 
+                }
+                .hero-subtitle { 
+                    border-left: none; 
+                    padding-left: 0; 
+                    border-top: 3px solid var(--accent); 
+                    padding-top: 0.5rem; 
+                    display: inline-block; 
+                }
+                .hero-right-map { 
+                    width: 100%; 
+                    max-width: 340px; 
+                    height: 240px;
+                    min-height: auto;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <Header />
 
-			.form-minimal button:hover {
-				background: var(--accent);
-			}
+        <main>
+            <section class="hero-slider">
+                {heroSlides.map((slide, index) => (
+                    <div class={`slide ${index === 0 ? 'active' : ''}`} style={`background-image: url('${slide.imagen}');`}>
+                        <div class="slide-overlay"></div>
+                        
+                        <!-- TEXTO IZQUIERDA -->
+                        <div class="hero-left-content">
+                            <h1>{slide.titulo}</h1>
+                            <p class="hero-subtitle">{slide.subtitulo}</p>
+                        </div>
 
-			@media (max-width: 900px) {
-				.slide { 
-					flex-direction: column; 
-					justify-content: center; 
-					text-align: center; 
-					padding: 2rem; 
-					gap: 2rem; 
-				}
-				.hero-left-content { 
-					max-width: 100%; 
-				}
-				.hero-subtitle { 
-					border-left: none; 
-					padding-left: 0; 
-					border-top: 3px solid var(--accent); 
-					padding-top: 0.5rem; 
-					display: inline-block; 
-				}
-				.hero-right-map { 
-					width: 100%; 
-					max-width: 320px; 
-					height: 220px;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
+                        <!-- TARJETA MAPA -->
+                        <a href={mapaCardData.enlace} class="hero-right-map" style={`background-image: url('${mapaCardData.imagen}');`}>
+                            <span class="map-top-tag">{mapaCardData.textoSuperior}</span>
+                            <div class="map-card-content">
+                                <h3>{mapaCardData.tituloPrincipal}</h3>
+                            </div>
+                        </a>
+                    </div>
+                ))}
+            </section>
 
-		<main>
-			<section class="hero-slider">
-				{heroSlides.map((slide, index) => (
-					<div class={`slide ${index === 0 ? 'active' : ''}`} style={`background-image: url('${slide.imagen}');`}>
-						<div class="slide-overlay"></div>
-						
-						<!-- TEXTO IZQUIERDA -->
-						<div class="hero-left-content">
-							<h1>{slide.titulo}</h1>
-							<p class="hero-subtitle">{slide.subtitulo}</p>
-						</div>
+            <script>
+                const slides = document.querySelectorAll('.slide');
+                let currentSlide = 0;
 
-						<!-- TARJETA IMAGEN 100% CON TEXTO EN MAYÚSCULAS -->
-						<a href={mapaCardData.enlace} class="hero-right-map" style={`background-image: url('${mapaCardData.imagen}');`}>
-							<div class="map-card-overlay"></div>
-							<div class="map-card-content">
-								<span class="map-action-tag">Pincha para</span>
-								<h3>{mapaCardData.titulo}</h3>
-							</div>
-						</a>
-					</div>
-				))}
-			</section>
+                function nextSlide() {
+                    if (slides.length > 0) {
+                        slides[currentSlide].classList.remove('active');
+                        currentSlide = (currentSlide + 1) % slides.length;
+                        slides[currentSlide].classList.add('active');
+                    }
+                }
 
-			<script>
-				const slides = document.querySelectorAll('.slide');
-				let currentSlide = 0;
+                setInterval(nextSlide, 5000);
+            </script>
 
-				function nextSlide() {
-					if (slides.length > 0) {
-						slides[currentSlide].classList.remove('active');
-						currentSlide = (currentSlide + 1) % slides.length;
-						slides[currentSlide].classList.add('active');
-					}
-				}
+            <section class="clean-section">
+                <h2 class="section-title">Últimas Publicaciones</h2>
+                <div class="articles-grid">
+                    {posts.map((post) => (
+                        <a href={`/blog/${post.id}/`} class="article-card">
+                            <span class="article-date">{post.data.pubDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                            <h3>{post.data.title}</h3>
+                            <p>{post.data.description}</p>
+                        </a>
+                    ))}
+                </div>
+            </section>
 
-				setInterval(nextSlide, 5000);
-			</script>
+            <section class="clean-section">
+                <div class="recommend-box">
+                    <h3>¿Nos falta algún imprescindible?</h3>
+                    <p style="color: #666;">Envíanos el nombre de ese bar de barrio con un almuerzo de categoría.</p>
+                    
+                    <form action="mailto:info@gastrovalencia.com" method="post" enctype="text/plain" class="form-minimal">
+                        <input type="text" name="Bar Recomendado" placeholder="Nombre del Bar y Zona" required />
+                        <textarea name="Motivo" rows="2" placeholder="¿Cuál es su especialidad?" required></textarea>
+                        <button type="submit">Enviar Recomendación</button>
+                    </form>
+                </div>
+            </section>
+        </main>
 
-			<section class="clean-section">
-				<h2 class="section-title">Últimas Publicaciones</h2>
-				<div class="articles-grid">
-					{posts.map((post) => (
-						<a href={`/blog/${post.id}/`} class="article-card">
-							<span class="article-date">{post.data.pubDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
-							<h3>{post.data.title}</h3>
-							<p>{post.data.description}</p>
-						</a>
-					))}
-				</div>
-			</section>
-
-			<section class="clean-section">
-				<div class="recommend-box">
-					<h3>¿Nos falta algún imprescindible?</h3>
-					<p style="color: #666;">Envíanos el nombre de ese bar de barrio con un almuerzo de categoría.</p>
-					
-					<form action="mailto:info@gastrovalencia.com" method="post" enctype="text/plain" class="form-minimal">
-						<input type="text" name="Bar Recomendado" placeholder="Nombre del Bar y Zona" required />
-						<textarea name="Motivo" rows="2" placeholder="¿Cuál es su especialidad?" required></textarea>
-						<button type="submit">Enviar Recomendación</button>
-					</form>
-				</div>
-			</section>
-		</main>
-
-		<Footer />
-	</body>
+        <Footer />
+    </body>
 </html>

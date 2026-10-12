@@ -1,6 +1,6 @@
 {
-  "imagen": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfqN-6VcAbd1H3e9YQ0VJrJpQlmjDFfL0EMOP43TOTYg&s=10",
-  "titulo": "Explorar el Mapa",
-  "subtitulo": "Busca arroces, esmorzarets y bodegas filtrando por zona y categoría.",
+  "imagen": "/Mapa_inicio.png",
+  "textoSuperior": "EXPLORA VALENCIA",
+  "tituloPrincipal": "DESCUBRE NUEVOS LOCALES",
   "enlace": "/mapa"
 }

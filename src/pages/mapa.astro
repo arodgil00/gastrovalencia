@@ -3,79 +3,89 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE } from '../consts';
-import categoriasLista from '../data/categorias.json';
+import categoriasMapa from '../data/categorias.json';
 
-// Importaciones directas y seguras de cada hipercategoría
+// Importaciones directas de los archivos JSON de locales
 import tradicionalData from '../data/locales/tradicional.json';
 import restaurantesData from '../data/locales/restaurantes.json';
 import neotradicionalData from '../data/locales/neotradicional.json';
-import internacionalData from '../data/locales/internacional.json';
+import burgersData from '../data/locales/burgers.json';
+import sushijapoData from '../data/locales/sushijapo.json';
+import supermercadosData from '../data/locales/supermercados.json';
 import cafeteriasData from '../data/locales/cafeterias.json';
+import internacionalData from '../data/locales/internacional.json';
 
-// Asertamos como array para evitar errores de TypeScript
 const tradicional = (tradicionalData || []) as any[];
 const restaurantes = (restaurantesData || []) as any[];
 const neotradicional = (neotradicionalData || []) as any[];
-const internacional = (internacionalData || []) as any[];
+const burgers = (burgersData || []) as any[];
+const sushijapo = (sushijapoData || []) as any[];
+const supermercados = (supermercadosData || []) as any[];
 const cafeterias = (cafeteriasData || []) as any[];
+const internacional = (internacionalData || []) as any[];
 
-// Unimos todos los locales en un único array
 const todosLosLocales = [
-	...tradicional,
-	...restaurantes,
-	...neotradicional,
-	...internacional,
-	...cafeterias
+    ...tradicional,
+    ...restaurantes,
+    ...neotradicional,
+    ...burgers,
+    ...sushijapo,
+    ...supermercados,
+    ...cafeterias,
+    ...internacional
 ];
+
+// Lista de pares [id, nombreVisible] para los botones de filtros
+const listaCategorias = Object.entries(categoriasMapa);
 ---
 
 <!doctype html>
 <html lang="es">
-	<head>
-		<BaseHead title={`Mapa Gastronómico | ${SITE_TITLE}`} description="Explora los mejores locales gastronómicos de Valencia en nuestro mapa interactivo." />
-		<!-- Leaflet CSS -->
-		<link
-			rel="stylesheet"
-			href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-			integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-			crossorigin=""
-		/>
-		<style>
-			:root {
-				--accent: #d9381e;
-				--orange-brand: #ff6b4a;
-				--bg-light: #fafafa;
-				--text-main: #111;
-			}
+    <head>
+        <BaseHead title={`Mapa Gastronómico | ${SITE_TITLE}`} description="Explora los mejores locales gastronómicos de Valencia en nuestro mapa interactivo." />
+        <!-- Leaflet CSS -->
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+            crossorigin=""
+        />
+        <style>
+            :root {
+                --accent: #d9381e;
+                --orange-brand: #ff6b4a;
+                --bg-light: #fafafa;
+                --text-main: #111;
+            }
 
-			* {
-				box-sizing: border-box;
-			}
+            * {
+                box-sizing: border-box;
+            }
 
-			html {
-				scrollbar-width: none;
-				-ms-overflow-style: none;
-			}
+            html {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
 
-			html::-webkit-scrollbar, 
-			body::-webkit-scrollbar {
-				display: none;
-				width: 0;
-				height: 0;
-			}
+            html::-webkit-scrollbar, 
+            body::-webkit-scrollbar {
+                display: none;
+                width: 0;
+                height: 0;
+            }
 
-			body {
-				margin: 0;
-				padding: 0;
-				background-color: var(--bg-light);
-				color: var(--text-main);
-				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-				overflow-x: hidden;
-			}
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: var(--bg-light);
+                color: var(--text-main);
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                overflow-x: hidden;
+            }
 
-			.page-header-title {
+            .page-header-title {
 				text-align: center;
-				padding: 2.5rem 1rem 1.5rem 1rem;
+				padding: 1.2rem 1rem 1rem 1rem; /* Reducimos el padding superior e inferior */
 				background: white;
 				border-bottom: 1px solid #f0f0f0;
 			}
@@ -83,410 +93,451 @@ const todosLosLocales = [
 			.page-header-title h1 {
 				margin: 0;
 				font-family: "Georgia", serif;
-				font-size: 2.2rem;
+				font-size: 2rem; /* Ligera reducción para compensar el subtítulo */
 				font-weight: 900;
 				text-transform: uppercase;
 				letter-spacing: 2px;
 				color: #111;
+				line-height: 1.1;
 			}
 
-			.map-page-container {
-				display: flex;
-				flex-direction: column;
-				width: 100%;
-				position: relative;
+			.page-header-subtitle {
+				margin: 0.4rem 0 0 0;
+				font-size: 0.9rem;
+				font-weight: 500;
+				color: #666;
+				letter-spacing: 0.5px;
+				text-transform: none;
+			}
+
+            .map-page-container {
+   			    display: flex;
+			    flex-direction: column;
+			    width: 100%;
+			    position: relative;
+			    /* Asegura que el conjunto mapa + barra no sobrepase la altura de la pantalla */
+			    min-height: calc(100vh - 80px);
 			}
 
 			/* --- CONTENEDOR DEL MAPA --- */
 			#map {
-				width: 100%;
-				height: 65vh;
-				min-height: 450px;
-				z-index: 1;
+			    width: 100%;
+			    /* Ocupa todo el espacio restante disponible por encima de los filtros */
+			    flex: 1;
+			    min-height: 400px;
+			    z-index: 1;
 			}
 
-			/* --- BARRA INFERIOR DE FILTROS EN MULTILÍNEA --- */
+            /* --- BARRA INFERIOR DE FILTROS --- */
 			.filters-bar {
 				background: #ffffff;
-				padding: 1.2rem 1.5rem;
+				padding: 1rem 1.5rem;
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				flex-wrap: wrap; /* Múltiples filas si es necesario */
+				flex-wrap: wrap;
 				gap: 0.6rem;
 				border-top: 1px solid #eaeaea;
-				border-bottom: 1px solid #eaeaea;
 				z-index: 10;
-				box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-			}
-
-			.filter-title {
-				font-size: 0.8rem;
-				font-weight: 800;
-				text-transform: uppercase;
-				letter-spacing: 1px;
-				color: #888;
-				margin-right: 0.5rem;
-				white-space: nowrap;
-			}
-
-			.filter-btn {
-				background: #f4f4f4;
-				border: 1px solid #e0e0e0;
-				color: #444;
-				padding: 0.45rem 1rem;
-				border-radius: 20px;
-				font-size: 0.85rem;
-				font-weight: 600;
-				cursor: pointer;
-				transition: all 0.2s ease;
-				user-select: none;
-			}
-
-			.filter-btn:hover {
-				background: #e9e9e9;
-			}
-
-			.filter-btn.active {
-				background: var(--orange-brand);
-				color: white;
-				border-color: var(--orange-brand);
-				box-shadow: 0 2px 8px rgba(255, 107, 74, 0.3);
-			}
-
-			/* --- BANNER INFORMATIVO DEBAJO DEL MAPA Y FILTROS --- */
-			.status-banner {
-				background: #111;
-				color: white;
-				padding: 1.2rem 1.5rem;
-				text-align: center;
-				font-size: 0.9rem;
-				letter-spacing: 0.5px;
-			}
-
-			.status-banner span {
-				color: var(--orange-brand);
-				font-weight: bold;
-			}
-
-			/* --- ESTILOS DE POPUPS DE LEAFLET --- */
-			.leaflet-popup-content-wrapper {
-				padding: 0;
-				border-radius: 12px;
-				overflow: hidden;
-				box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-			}
-
-			.leaflet-popup-content {
-				margin: 0 !important;
-				width: 280px !important;
-			}
-
-			.popup-card {
-				display: flex;
-				flex-direction: column;
-			}
-
-			.popup-image {
-				width: 100%;
-				height: 140px;
-				background-size: cover;
-				background-position: center;
-			}
-
-			.popup-body {
-				padding: 1rem;
-			}
-
-			.popup-header-info {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				margin-bottom: 0.5rem;
-			}
-
-			.popup-zone {
-				font-size: 0.75rem;
-				font-weight: 700;
-				color: #777;
-				text-transform: uppercase;
-			}
-
-			.popup-price {
-				font-size: 0.8rem;
-				font-weight: 800;
-				color: #2e7d32;
-			}
-
-			.popup-title {
-				margin: 0 0 0.5rem 0;
-				font-size: 1.15rem;
-				font-weight: 800;
-				color: #111;
-				line-height: 1.2;
-			}
-
-			.popup-tags {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 0.3rem;
-				margin-bottom: 0.6rem;
-			}
-
-			.popup-tag {
-				background: #fff0ec;
-				color: var(--orange-brand);
-				font-size: 0.7rem;
-				font-weight: 700;
-				padding: 0.2rem 0.5rem;
-				border-radius: 4px;
-				text-transform: uppercase;
-			}
-
-			.popup-desc {
-				font-size: 0.85rem;
-				color: #555;
-				margin: 0 0 0.8rem 0;
-				line-height: 1.4;
-			}
-
-			.popup-address {
-				font-size: 0.75rem;
-				color: #888;
-				margin: 0;
-				border-top: 1px solid #eee;
-				padding-top: 0.5rem;
-			}
-
-			.orange-pin-icon {
-				background: none !important;
-				border: none !important;
-			}
-
-			/* --- SECCIÓN RECOMENDACIÓN INFERIOR --- */
-			.clean-section {
-				max-width: 900px;
-				margin: 4rem auto;
-				padding: 0 1.5rem;
-			}
-
-			.recommend-box {
-				background: white;
-				padding: 3rem;
-				border: 1px solid #eee;
-				text-align: center;
-				border-radius: 12px;
-				box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-			}
-
-			.recommend-box h3 {
-				margin-top: 0;
-				font-size: 1.4rem;
-				text-transform: uppercase;
-				letter-spacing: 1px;
-			}
-
-			.form-minimal {
-				max-width: 500px;
-				margin: 2rem auto 0 auto;
-				display: flex;
-				flex-direction: column;
-				gap: 1rem;
-			}
-
-			.form-minimal input, .form-minimal textarea {
-				width: 100%;
-				padding: 1rem;
-				border: 1px solid #ddd;
-				background: #fafafa;
-				font-family: inherit;
-				box-sizing: border-box;
-				font-size: 0.95rem;
-				border-radius: 6px;
-			}
-
-			.form-minimal button {
-				background: #111;
-				color: white;
-				border: none;
-				padding: 1rem;
-				font-weight: bold;
-				text-transform: uppercase;
-				letter-spacing: 2px;
-				cursor: pointer;
-				transition: background 0.2s;
-				border-radius: 6px;
-			}
-
-			.form-minimal button:hover {
-				background: var(--accent);
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-
-		<div class="page-header-title">
-			<h1>MAPA GASTRONÓMICO</h1>
-		</div>
-
-		<div class="map-page-container">
-			<!-- MAPA PRIMERO -->
-			<div id="map"></div>
-
-			<!-- FILTROS MULTISELECCIÓN DEBAJO DEL MAPA EN MULTILÍNEA -->
-			<div class="filters-bar">
-				<span class="filter-title">FILTRAR:</span>
-				<button class="filter-btn active" data-category="todos">Todos</button>
-				{categoriasLista.map((cat) => (
-					<button class="filter-btn" data-category={cat}>{cat}</button>
-				))}
-			</div>
-
-			<!-- BANNER DEBAJO DE LOS FILTROS -->
-			<div class="status-banner">
-				Actualmente mostrando <span id="visible-count">{todosLosLocales.length}</span> de {todosLosLocales.length} templos gastronómicos verificados.
-			</div>
-		</div>
-
-		<!-- SECCIÓN MÁNDANOS UN BAR -->
-		<section class="clean-section">
-			<div class="recommend-box">
-				<h3>¿Nos falta un bar? ¡Mándanoslo!</h3>
-				<p style="color: #666;">Si conoces un local imprescindible que deba estar en el mapa, dinos cuál es y lo probaremos.</p>
+				box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
 				
-				<form action="mailto:info@gastrovalencia.com" method="post" enctype="text/plain" class="form-minimal">
-					<input type="text" name="Bar Recomendado" placeholder="Nombre del Bar y Zona" required />
-					<textarea name="Motivo" rows="2" placeholder="¿Cuál es su especialidad o por qué destaca?" required></textarea>
-					<button type="submit">Enviar Recomendación</button>
-				</form>
-			</div>
-		</section>
+				/* HACE QUE SE QUEDE FIJA ABAJO DE LA PANTALLA MIENTRAS HAYS SCROLL EN EL MAPA */
+				position: sticky;
+				bottom: 45px; /* Altura aprox. del banner inferior */
+			}
 
-		<Footer />
+            .filter-title {
+                font-size: 0.8rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: #888;
+                margin-right: 0.5rem;
+                white-space: nowrap;
+            }
 
-		<!-- Leaflet JS -->
-		<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+            .filter-btn {
+                background: #f4f4f4;
+                border: 1px solid #e0e0e0;
+                color: #444;
+                padding: 0.45rem 1rem;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                user-select: none;
+            }
 
-		<script is:inline define:vars={{ todosLosLocales }}>
-			document.addEventListener('DOMContentLoaded', () => {
-				// Encuadre idéntico a la captura (núcleo urbano de Valencia)
-				const map = L.map('map', { zoomControl: false }).setView([39.4725, -0.3620], 14);
+            .filter-btn:hover {
+                background: #e9e9e9;
+            }
 
-				L.control.zoom({ position: 'bottomright' }).addTo(map);
+            .filter-btn.active {
+                background: var(--orange-brand);
+                color: white;
+                border-color: var(--orange-brand);
+                box-shadow: 0 2px 8px rgba(255, 107, 74, 0.3);
+            }
 
-				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-					attribution: '&copy; OpenStreetMap contributors',
-					maxZoom: 19
-				}).addTo(map);
+            /* --- BANNER INFORMATIVO --- */
+			.status-banner {
+			    background: #111;
+			    color: white;
+			    padding: 0.8rem 1.5rem;
+			    text-align: center;
+			    font-size: 0.85rem;
+			    letter-spacing: 0.5px;
+			    z-index: 11;
+			    /* SE QUEDA PEAGADO ABAJO DEL TODO */
+			    position: sticky;
+			    bottom: 0;
+			}
 
-				const orangeSvg = `<svg width="30" height="42" viewBox="0 0 30 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path d="M15 0C6.71573 0 0 6.71573 0 15C0 26.25 15 42 15 42C15 42 30 26.25 30 15C30 6.71573 23.2843 0 15 0Z" fill="#FF6B4A"/>
-					<circle cx="15" cy="15" r="6" fill="white"/>
-				</svg>`;
+            .status-banner span {
+                color: var(--orange-brand);
+                font-weight: bold;
+            }
 
-				const orangeIcon = L.divIcon({
-					className: 'orange-pin-icon',
-					html: orangeSvg,
-					iconSize: [30, 42],
-					iconAnchor: [15, 42],
-					popupAnchor: [0, -42]
-				});
+            /* --- ESTILOS DE POPUPS DE LEAFLET --- */
+            .leaflet-popup-content-wrapper {
+                padding: 0 !important;
+                border-radius: 14px !important;
+                overflow: hidden !important;
+                box-shadow: 0 12px 30px rgba(0,0,0,0.18) !important;
+                max-height: 420px !important;
+            }
 
-				const markersGroup = [];
+            .leaflet-popup-content {
+                margin: 0 !important;
+                width: 270px !important;
+                max-height: 420px !important;
+                overflow-y: auto !important;
+            }
 
-				if (Array.isArray(todosLosLocales)) {
-					todosLosLocales.forEach((item) => {
-						if (!item.coords || !Array.isArray(item.coords)) return;
+            .orange-pin-icon {
+                background: none !important;
+                border: none !important;
+            }
 
-						const tagsHTML = (item.categorias || []).map(c => `<span class="popup-tag">${c}</span>`).join('');
+            /* --- ESTILOS DE ENLACES LIMPIOS --- */
+            a.gastro-clean-link {
+                color: #222222 !important;
+                text-decoration: none !important;
+                font-size: 0.85rem !important;
+                font-weight: 600 !important;
+                transition: color 0.2s ease;
+                display: inline-block !important;
+            }
 
-						const popupContent = `
-							<div class="popup-card">
-								<div class="popup-image" style="background-image: url('${item.imagen || ''}');"></div>
-								<div class="popup-body">
-									<div class="popup-header-info">
-										<span class="popup-zone">${item.zona || ''}</span>
-										<span class="popup-price">${item.precio || ''}</span>
-									</div>
-									<h3 class="popup-title">${item.nombre || ''}</h3>
-									<div class="popup-tags">${tagsHTML}</div>
-									<p class="popup-desc">${item.descripcion || ''}</p>
-									<p class="popup-address">📍 ${item.direccion || ''}</p>
-								</div>
-							</div>
-						`;
+            a.gastro-clean-link:hover {
+                color: #ff6b4a !important;
+                text-decoration: underline !important;
+            }
 
-						const marker = L.marker(item.coords, { icon: orangeIcon })
-							.bindPopup(popupContent)
-							.addTo(map);
+            /* --- SECCIÓN RECOMENDACIÓN INFERIOR --- */
+            .clean-section {
+                max-width: 900px;
+                margin: 4rem auto;
+                padding: 0 1.5rem;
+            }
 
-						markersGroup.push({
-							marker: marker,
-							categorias: item.categorias || []
-						});
-					});
-				}
+            .recommend-box {
+                background: white;
+                padding: 3rem;
+                border: 1px solid #eee;
+                text-align: center;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            }
 
-				// LÓGICA DE FILTRADO MULTISELECCIÓN
-				const filterButtons = document.querySelectorAll('.filter-btn');
-				const btnTodos = document.querySelector('.filter-btn[data-category="todos"]');
-				const countSpan = document.getElementById('visible-count');
+            .recommend-box h3 {
+                margin-top: 0;
+                font-size: 1.4rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
 
-				function updateMapMarkers() {
-					// Obtener todas las categorías activas (excluyendo "todos")
-					const activeCategories = Array.from(document.querySelectorAll('.filter-btn.active'))
-						.map(btn => btn.getAttribute('data-category'))
-						.filter(cat => cat !== 'todos');
+            .form-minimal {
+                max-width: 500px;
+                margin: 2rem auto 0 auto;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
 
-					let visibleCount = 0;
+            .form-minimal input, .form-minimal textarea {
+                width: 100%;
+                padding: 1rem;
+                border: 1px solid #ddd;
+                background: #fafafa;
+                font-family: inherit;
+                box-sizing: border-box;
+                font-size: 0.95rem;
+                border-radius: 6px;
+            }
 
-					markersGroup.forEach(({ marker, categorias }) => {
-						// Si "Todos" está activo o no hay ninguna categoría seleccionada, se muestra todo
-						if (btnTodos.classList.contains('active') || activeCategories.length === 0) {
-							map.addLayer(marker);
-							visibleCount++;
-						} else {
-							// Comprobar si el local comparte al menos una de las categorías seleccionadas
-							const hasMatch = categorias.some(c => activeCategories.includes(c));
-							if (hasMatch) {
-								map.addLayer(marker);
-								visibleCount++;
-							} else {
-								map.removeLayer(marker);
-							}
-						}
-					});
+            .form-minimal button {
+                background: #111;
+                color: white;
+                border: none;
+                padding: 1rem;
+                font-weight: bold;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                cursor: pointer;
+                transition: background 0.2s;
+                border-radius: 6px;
+            }
 
-					if (countSpan) {
-						countSpan.textContent = visibleCount;
-					}
-				}
+            .form-minimal button:hover {
+                background: var(--accent);
+            }
+        </style>
+    </head>
+    <body>
+        <Header />
 
-				filterButtons.forEach((btn) => {
-					btn.addEventListener('click', () => {
-						const category = btn.getAttribute('data-category');
+        <div class="page-header-title">
+			<h1>MAPA GASTRONÓMICO</h1>
+			<p class="page-header-subtitle">TÚ PRÓXIMO BAR LO ENCONTRARÁS AQUÍ</p>
+		</div>
 
-						if (category === 'todos') {
-							// Si se pulsa "Todos", se desmarcan el resto
-							filterButtons.forEach(b => b.classList.remove('active'));
-							btnTodos.classList.add('active');
-						} else {
-							// Si se pulsa una categoría individual, se desmarca "Todos"
-							btnTodos.classList.remove('active');
-							btn.classList.toggle('active');
+        <div class="map-page-container">
+            <div id="map"></div>
 
-							// Si se desmarcan todas las categorías, reactivar "Todos" por defecto
-							const anyActive = Array.from(filterButtons).some(b => b !== btnTodos && b.classList.contains('active'));
-							if (!anyActive) {
-								btnTodos.classList.add('active');
-							}
-						}
+            <div class="filters-bar">
+                <span class="filter-title">FILTRAR:</span>
+                <button class="filter-btn active" data-category="todos">Todos</button>
+                {listaCategorias.map(([catKey, catNombre]) => (
+                    <button class="filter-btn" data-category={catKey}>{catNombre}</button>
+                ))}
+            </div>
 
-						updateMapMarkers();
-					});
-				});
-			});
-		</script>
-	</body>
+            <div class="status-banner">
+                Actualmente mostrando <span id="visible-count">{todosLosLocales.length}</span> de {todosLosLocales.length} templos gastronómicos verificados.
+            </div>
+        </div>
+
+        <section class="clean-section">
+            <div class="recommend-box">
+                <h3>¿Nos falta un bar? ¡Mándanoslo!</h3>
+                <p style="color: #666;">Si conoces un local imprescindible que deba estar en el mapa, dinos cuál es y lo probaremos.</p>
+                
+                <form action="mailto:info@gastrovalencia.com" method="post" enctype="text/plain" class="form-minimal">
+                    <input type="text" name="Bar Recomendado" placeholder="Nombre del Bar y Zona" required />
+                    <textarea name="Motivo" rows="2" placeholder="¿Cuál es su especialidad o por qué destaca?" required></textarea>
+                    <button type="submit">Enviar Recomendación</button>
+                </form>
+            </div>
+        </section>
+
+        <Footer />
+
+        <!-- Leaflet JS -->
+        <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+        <script is:inline define:vars={{ todosLosLocales, categoriasMapa }}>
+            document.addEventListener('DOMContentLoaded', () => {
+                // Función para 5 estrellas
+                function renderStars(rating) {
+                    const num = parseFloat(rating);
+                    if (isNaN(num)) return '';
+
+                    let starsHTML = '<div style="display: flex; justify-content: center; align-items: center; gap: 3px; font-size: 1.4rem; margin-bottom: 8px;">';
+                    for (let i = 1; i <= 5; i++) {
+                        if (num >= i) {
+                            starsHTML += '<span style="color: #ff9800;">★</span>';
+                        } else if (num >= i - 0.5) {
+                            starsHTML += '<span style="background: linear-gradient(90deg, #ff9800 50%, #e0e0e0 50%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;">★</span>';
+                        } else {
+                            starsHTML += '<span style="color: #e0e0e0;">★</span>';
+                        }
+                    }
+                    starsHTML += '</div>';
+                    return starsHTML;
+                }
+
+                // Función para los euros
+                function renderPriceSymbol(item) {
+                    if (item.precioNivel) {
+                        const level = parseInt(item.precioNivel);
+                        return '€'.repeat(Math.min(Math.max(level, 1), 4));
+                    }
+                    if (item.precio) {
+                        const match = item.precio.match(/€+/);
+                        return match ? match[0] : item.precio;
+                    }
+                    return '';
+                }
+
+                // Configuración de mapa con zoomSnap: 0.5 y zoom 13.5
+                const map = L.map('map', { zoomControl: false, zoomSnap: 0.5 }).setView([39.473, -0.375], 13.5);
+
+                L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(map);
+
+                const orangeSvg = `<svg width="30" height="42" viewBox="0 0 30 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 0C6.71573 0 0 6.71573 0 15C0 26.25 15 42 15 42C15 42 30 26.25 30 15C30 6.71573 23.2843 0 15 0Z" fill="#FF6B4A"/>
+                    <circle cx="15" cy="15" r="6" fill="white"/>
+                </svg>`;
+
+                const orangeIcon = L.divIcon({
+                    className: 'orange-pin-icon',
+                    html: orangeSvg,
+                    iconSize: [30, 42],
+                    iconAnchor: [15, 42],
+                    popupAnchor: [0, -42]
+                });
+
+                const markersGroup = [];
+
+                if (Array.isArray(todosLosLocales)) {
+                    todosLosLocales.forEach((item) => {
+                        if (!item.coords || !Array.isArray(item.coords) || item.coords.length < 2) return;
+
+                        // Traducir los IDs de categorías a sus nombres formateados desde categorias.json
+                        const catKeys = item.categorias || [];
+                        const catNombres = catKeys.map(key => categoriasMapa[key] || key);
+                        const tagsText = catNombres.join(', ');
+                        const tagsHTML = tagsText ? `<p style="margin: 0 0 10px 0; font-size: 0.8rem; color: #ff6b4a; font-weight: 700; text-transform: uppercase;">${tagsText}</p>` : '';
+                        
+                        // Estrellas
+                        const ratingNum = item.puntuacion || item.puntuacio;
+                        const starsHTML = ratingNum ? renderStars(ratingNum) : '';
+
+                        // Almuerzo
+                        const almuerzoVal = item.almuerzo || item.almuerzoPrecio;
+                        const almuerzoHTML = (almuerzoVal && almuerzoVal.trim() !== '') ? `
+                            <p style="margin: 0 0 14px 0; font-size: 0.85rem; color: #222; font-weight: 700; background: #f8f8f8; padding: 6px; border-radius: 6px;">
+                                🥪 Almuerzo: ${almuerzoVal}
+                            </p>
+                        ` : '';
+
+                        // Enlace al Blog
+                        const hasPost = item.postUrl && item.postUrl.trim() !== '';
+                        const postLinkHTML = hasPost ? `
+                            <div style="margin-bottom: 6px;">
+                                <a href="${item.postUrl}" class="gastro-clean-link">📄 Leer reseña en el blog</a>
+                            </div>
+                        ` : '';
+
+                        // Enlace a Google Maps
+                        const hasMaps = item.googleMaps && item.googleMaps.trim() !== '';
+                        const mapsBtnHTML = hasMaps ? `
+                            <div>
+                                <a href="${item.googleMaps}" target="_blank" rel="noopener noreferrer" class="gastro-clean-link">📍 Abrir en Google Maps</a>
+                            </div>
+                        ` : '';
+
+                        const actionsHTML = (hasPost || hasMaps) ? `
+                            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eeeeee;">
+                                ${postLinkHTML}
+                                ${mapsBtnHTML}
+                            </div>
+                        ` : '';
+
+                        const popupContent = `
+                            <div style="display: flex; flex-direction: column;">
+                                <!-- Imagen en formato 1:1 -->
+                                <div style="width: 100%; aspect-ratio: 1 / 1; background-image: url('${item.imagen || ''}'); background-size: cover; background-position: center;"></div>
+                                
+                                <div style="padding: 1rem; text-align: center;">
+                                    <!-- Cabecera: Zona e Indicador de Precio -->
+                                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 6px;">
+                                        <span style="font-size: 0.75rem; font-weight: 800; color: #777; text-transform: uppercase;">${item.zona || ''}</span>
+                                        <span style="font-size: 0.95rem; font-weight: 900; color: #111;">${renderPriceSymbol(item)}</span>
+                                    </div>
+                                    
+                                    <!-- Nombre -->
+                                    <h3 style="margin: 0 0 8px 0; font-family: 'Georgia', serif; font-size: 1.4rem; font-weight: 900; text-transform: uppercase; color: #111; line-height: 1.2;">${item.nombre || ''}</h3>
+                                    
+                                    <!-- Estrellas -->
+                                    ${starsHTML}
+
+                                    <!-- Categorías Traducidas -->
+                                    ${tagsHTML}
+
+                                    <!-- Descripción -->
+                                    <p style="margin: 0 0 12px 0; font-size: 0.85rem; color: #555; line-height: 1.4;">${item.descripcion || ''}</p>
+                                    
+                                    <!-- Almuerzo -->
+                                    ${almuerzoHTML}
+
+                                    <!-- Enlaces -->
+                                    ${actionsHTML}
+                                </div>
+                            </div>
+                        `;
+
+                        const marker = L.marker(item.coords, { icon: orangeIcon })
+                            .bindPopup(popupContent)
+                            .addTo(map);
+
+                        markersGroup.push({
+                            marker: marker,
+                            categorias: catKeys
+                        });
+                    });
+                }
+
+                // Filtrado por categoría
+                const filterButtons = document.querySelectorAll('.filter-btn');
+                const btnTodos = document.querySelector('.filter-btn[data-category="todos"]');
+                const countSpan = document.getElementById('visible-count');
+
+                function updateMapMarkers() {
+                    const activeCategories = Array.from(document.querySelectorAll('.filter-btn.active'))
+                        .map(btn => btn.getAttribute('data-category'))
+                        .filter(cat => cat !== 'todos');
+
+                    let visibleCount = 0;
+
+                    markersGroup.forEach(({ marker, categorias }) => {
+                        if (btnTodos.classList.contains('active') || activeCategories.length === 0) {
+                            map.addLayer(marker);
+                            visibleCount++;
+                        } else {
+                            const hasMatch = categorias.some(c => activeCategories.includes(c));
+                            if (hasMatch) {
+                                map.addLayer(marker);
+                                visibleCount++;
+                            } else {
+                                map.removeLayer(marker);
+                            }
+                        }
+                    });
+
+                    if (countSpan) {
+                        countSpan.textContent = visibleCount;
+                    }
+                }
+
+                filterButtons.forEach((btn) => {
+                    btn.addEventListener('click', () => {
+                        const category = btn.getAttribute('data-category');
+
+                        if (category === 'todos') {
+                            filterButtons.forEach(b => b.classList.remove('active'));
+                            btnTodos.classList.add('active');
+                        } else {
+                            btnTodos.classList.remove('active');
+                            btn.classList.toggle('active');
+
+                            const anyActive = Array.from(filterButtons).some(b => b !== btnTodos && b.classList.contains('active'));
+                            if (!anyActive) {
+                                btnTodos.classList.add('active');
+                            }
+                        }
+
+                        updateMapMarkers();
+                    });
+                });
+            });
+        </script>
+    </body>
 </html>
